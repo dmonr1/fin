@@ -1,0 +1,435 @@
+@import url('https://fonts.googleapis.com/css2?family=Concert+One&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+/* RESET */
+* {
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+}
+
+/* BODY */
+body {
+    background: #f5f6f8;
+    padding: 30px;
+}
+
+.sub {
+    font-weight: 600;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+/* LAYOUT GENERAL */
+.layout {
+    display: flex;
+    gap: 30px;
+    height: 100%;
+    align-items: stretch;
+}
+
+/* ===================== */
+/* IZQUIERDA */
+/* ===================== */
+
+.left {
+    width: 25%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+}
+
+.card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* SALDO */
+.saldo h1 {
+    font-size: 42px;
+    margin: 10px 0 0;
+
+}
+
+h3 {
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+/* RESUMEN */
+.ingreso {
+    color: #1fa463;
+    font-weight: bold;
+}
+
+.gasto {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.saldo {
+    height: 20%;
+    overflow: hidden;
+    /* evita que se salga */
+
+}
+
+.saldo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.theme-switch {
+    position: relative;
+    width: 56px;
+    height: 28px;
+}
+
+.theme-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    inset: 0;
+    background: #e0e0e0;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.slider::before {
+    content: "";
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    left: 3px;
+    top: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+/* ICONOS */
+.slider i {
+    position: absolute;
+    top: 6px;
+    font-size: 14px;
+}
+
+.sun {
+    left: 8px;
+    color: #f1c40f;
+}
+
+.moon {
+    right: 8px;
+    color: #2c3e50;
+}
+
+/* ACTIVO */
+.theme-switch input:checked+.slider {
+    background: #2f96ed;
+}
+
+.theme-switch input:checked+.slider::before {
+    transform: translateX(28px);
+}
+
+
+.resumen {
+    height: 30%;
+    overflow: hidden;
+    /* evita que se salga */
+
+}
+
+.registro {
+    height: 50%;
+    overflow: auto;
+    /* evita que se salga */
+
+}
+
+/* REGISTRO */
+.registro input,
+.registro select,
+.registro button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.registro button {
+    background: #2f96ed;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 550;
+}
+
+/* ===================== */
+/* DERECHA */
+/* ===================== */
+
+.right {
+    flex: 1;
+    height: 100%;
+    display: flex;
+}
+
+/* CARD CALENDARIO */
+.calendar-card {
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+
+    display: flex;
+    flex-direction: column;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: #2f96ed;
+    /* 🎨 color del header */
+    color: #fff;
+
+    font-weight: 600;
+    font-size: clamp(1.2rem, 2.5vw, 2rem);
+
+    padding: 16px 20px;
+    border-radius: 14px;
+    margin-bottom: 30px;
+}
+
+.calendar-header button {
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.calendar-header button:hover {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+/* DIAS SEMANA */
+.calendar-week {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* GRID CALENDARIO */
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    /* 6 filas fijas */
+    gap: 12px;
+    flex: 1;
+    /* ocupa todo el alto disponible */
+}
+
+/* DIA */
+.calendar-days div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: clamp(24px, 1.2vw, 16px);
+    font-weight: 650;
+
+    background: #f7f7f7;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.calendar-days div:hover {
+    background: #eaeaea;
+}
+
+/* HOY */
+.today {
+    background: #2f96ed !important;
+    color: #fff;
+    font-weight: bold;
+}
+
+.calendar-day {
+    position: relative;
+}
+
+/* BASE */
+.badge {
+    position: absolute;
+    right: 6px;
+
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+
+    font-size: 14px;
+    font-weight: bold;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* + ARRIBA */
+.badge.ingreso {
+    top: 6px;
+    background: rgba(46, 204, 113, 0.25);
+    color: #2ecc71;
+}
+
+/* − ABAJO DEL + */
+.badge.gasto {
+    top: 34px;
+    /* separación fija */
+    background: rgba(231, 76, 60, 0.25);
+    color: #e74c3c;
+}
+
+/* CONTADOR */
+.badge .count {
+    position: absolute;
+    bottom: -6px;
+    right: -6px;
+
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+
+    background: #333;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+/* ===================== */
+/* 🌙 MODO OSCURO */
+/* ===================== */
+
+body.dark {
+    background: #2a2a2a;
+    color: #eaeaea;
+}
+
+/* CARDS */
+body.dark .card,
+body.dark .calendar-card {
+    background: #2a2a2a;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+}
+
+/* TEXTOS */
+body.dark h1,
+body.dark h3,
+body.dark p,
+body.dark span {
+    color: #f1f1f1;
+}
+
+body.dark .sub {
+    color: #bdbdbd;
+}
+
+/* INPUTS */
+body.dark input,
+body.dark select {
+    background: #2a2a2a;
+    color: #fff;
+    border: 1px solid #444;
+}
+
+body.dark input::placeholder {
+    color: #aaa;
+}
+
+/* BOTÓN */
+body.dark .registro button {
+    background: #2f96ed;
+}
+
+/* RESUMEN */
+body.dark .ingreso {
+    color: #2ecc71;
+}
+
+body.dark .gasto {
+    color: #e74c3c;
+}
+
+/* CALENDARIO */
+body.dark .calendar-week div {
+    color: #bdbdbd;
+}
+
+body.dark .calendar-days div {
+    background: #2a2a2a;
+    color: #fff;
+}
+
+body.dark .calendar-days div:hover {
+    background: #3a3a3a;
+}
+
+/* HOY */
+body.dark .today {
+    background: #2f96ed !important;
+    color: #fff;
+}
+
+/* HEADER CALENDARIO */
+body.dark .calendar-header {
+    background: #1f6fb2;
+}
+
+/* SWITCH */
+body.dark .slider {
+    background: #444;
+}
+
+body.dark .moon {
+    color: #9c1bd8;
+}
+
+body.dark .sun {
+    color: #f1c40f;
+}

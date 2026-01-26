@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Mis Finanzas</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=   Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+</head>
+
+<body>
+
+    <div class="layout">
+
+        <!-- IZQUIERDA -->
+        <div class="left">
+
+            <div class="card saldo">
+                <div class="saldo-header">
+                    <p class="sub">Saldo actual</p>
+
+                    <label class="theme-switch">
+                        <input type="checkbox" id="themeToggle">
+                        <span class="slider">
+                            <i class="fa-solid fa-sun sun"></i>
+                            <i class="fa-solid fa-moon moon"></i>
+                        </span>
+                    </label>
+                </div>
+
+                <h1>S/ <span id="saldo">0.00</span></h1>
+            </div>
+
+
+            <div class="card resumen">
+                <h3> Ingreso automático</h3>
+                <p><strong>Día 28 → S/ 1130.00</strong></p>
+                <hr>
+                <p class="ingreso"> Ingresos: S/ <span id="ingresos">0.00</span></p>
+                <p class="gasto"> Gastos: S/ <span id="gastos">0.00</span></p>
+            </div>
+
+            <div class="card registro">
+                <h3>Registrar movimiento</h3>
+
+                <input type="date" id="fecha">
+                <select id="tipo">
+                    <option value="ingreso">Ingreso</option>
+                    <option value="gasto">Gasto</option>
+                </select>
+                <input type="number" id="monto" placeholder="Monto">
+                <input type="text" id="descripcion" placeholder="Descripción">
+                <button onclick="guardarMovimiento()">Guardar</button>
+            </div>
+
+        </div>
+
+        <!-- DERECHA -->
+        <div class="right">
+            <div class="calendar-card">
+                <div class="calendar-header">
+                    <button onclick="cambiarMes(-1)">◀</button>
+                    <span id="mesAnio"></span>
+                    <button onclick="cambiarMes(1)">▶</button>
+                </div>
+
+                <div class="calendar-week">
+                    <div>LUN</div>
+                    <div>MAR</div>
+                    <div>MIÉ</div>
+                    <div>JUE</div>
+                    <div>VIE</div>
+                    <div>SÁB</div>
+                    <div>DOM</div>
+                </div>
+
+                <div class="calendar-days" id="calendarDays"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
