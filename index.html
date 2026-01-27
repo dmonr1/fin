@@ -8,20 +8,48 @@
     <link href="https://fonts.googleapis.com/css2?family=   Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
 </head>
+
+<div class="modal-overlay" id="modal">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-icon warning">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </div>
+            <h3 id="modalTitle">Atención</h3>
+        </div>
+        <p id="modalMessage">
+            Completa los campos requeridos
+        </p>
+        <button class="modal-btn" onclick="cerrarModal()">Entendido</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalDia">
+    <div class="modal modal-dia">
+        <div class="modal-header">
+            <div class="modal-icon info">
+                <i class="fa-solid fa-calendar-day"></i>
+            </div>
+            <h3 id="modalDiaTitulo">Detalle del día</h3>
+        </div>
+        <div class="modal-dia-body collapsed" id="modalDiaContenido"></div>
+        <div id="modalDiaToggle"></div>
+        <div id="modalDiaTotales"></div>
+        <button class="modal-btn" onclick="cerrarModalDia()">Cerrar</button>
+    </div>
+</div>
 
 <body>
 
     <div class="layout">
-
-        <!-- IZQUIERDA -->
         <div class="left">
-
             <div class="card saldo">
                 <div class="saldo-header">
-                    <p class="sub">Saldo actual</p>
-
+                    <div class="saldo-title">
+                        <i class="fa-solid fa-wallet"></i>
+                        <p class="sub">Saldo actual</p>
+                    </div>
                     <label class="theme-switch">
                         <input type="checkbox" id="themeToggle">
                         <span class="slider">
@@ -30,35 +58,54 @@
                         </span>
                     </label>
                 </div>
-
-                <h1>S/ <span id="saldo">0.00</span></h1>
+                <div class="saldo-body">
+                    <span class="currency">S/</span>
+                    <span id="saldo" class="odometro"></span>
+                </div>
             </div>
-
-
             <div class="card resumen">
-                <h3> Ingreso automático</h3>
-                <p><strong>Día 28 → S/ 1130.00</strong></p>
-                <hr>
-                <p class="ingreso"> Ingresos: S/ <span id="ingresos">0.00</span></p>
-                <p class="gasto"> Gastos: S/ <span id="gastos">0.00</span></p>
-            </div>
+                <div class="resumen-header">
+                    <div class="resumen-title">
+                        <div class="resumen-icon">
+                            <i class="fa-solid fa-down-left-and-up-right-to-center"></i>
+                        </div>
+                        <div>
+                            <h3>Movimientos</h3>
+                            <p class="resumen-sub">Día 28 · S/ 1130.00</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="resumen-body">
+                    <div class="resumen-item ingreso">
+                        <span class="res">Ingresos</span>
+                        <strong>S/ <span class="res" id="ingresos">0.00</span></strong>
+                    </div>
 
+                    <div class="resumen-item gasto">
+                        <span class="res">Gastos</span>
+                        <strong>S/ <span id="gastos">0.00</span></strong>
+                    </div>
+                </div>
+            </div>
             <div class="card registro">
-                <h3>Registrar movimiento</h3>
-
-                <input type="date" id="fecha">
-                <select id="tipo">
-                    <option value="ingreso">Ingreso</option>
-                    <option value="gasto">Gasto</option>
-                </select>
-                <input type="number" id="monto" placeholder="Monto">
-                <input type="text" id="descripcion" placeholder="Descripción">
-                <button onclick="guardarMovimiento()">Guardar</button>
+                <div class="registro-header">
+                    <div class="registro-icon">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </div>
+                    <h3>Registrar movimiento</h3>
+                </div>
+                <div class="registro-body">
+                    <input type="date" id="fecha">
+                    <select id="tipo">
+                        <option value="ingreso">Ingreso</option>
+                        <option value="gasto">Gasto</option>
+                    </select>
+                    <input type="number" id="monto" placeholder="Monto">
+                    <input type="text" id="descripcion" placeholder="Descripción">
+                    <button onclick="guardarMovimiento()">Guardar</button>
+                </div>
             </div>
-
         </div>
-
-        <!-- DERECHA -->
         <div class="right">
             <div class="calendar-card">
                 <div class="calendar-header">
@@ -66,7 +113,6 @@
                     <span id="mesAnio"></span>
                     <button onclick="cambiarMes(1)">▶</button>
                 </div>
-
                 <div class="calendar-week">
                     <div>LUN</div>
                     <div>MAR</div>
@@ -76,14 +122,10 @@
                     <div>SÁB</div>
                     <div>DOM</div>
                 </div>
-
                 <div class="calendar-days" id="calendarDays"></div>
             </div>
         </div>
-
     </div>
-
     <script src="app.js"></script>
 </body>
-
 </html>
