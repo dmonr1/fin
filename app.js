@@ -194,12 +194,14 @@ function actualizarResumen() {
     let ingresos = 0;
     let gastos = 0;
 
+    const saldoInicial = Number(localStorage.getItem("saldoInicial")) || 0;
+
     movimientos.forEach(m => {
         if (m.tipo === "ingreso") ingresos += m.monto;
         else gastos += m.monto;
     });
 
-    const saldo = ingresos - gastos;
+    const saldo = saldoInicial + ingresos - gastos;
 
     animarOdometer(document.getElementById("ingresos"), ingresosActual, ingresos);
     animarOdometer(document.getElementById("gastos"), gastosActual, gastos);
@@ -209,6 +211,7 @@ function actualizarResumen() {
     gastosActual = gastos;
     saldoActual = saldo;
 }
+
 
 function mostrarModal(titulo, mensaje) {
     document.getElementById("modalTitle").textContent = titulo;
@@ -314,7 +317,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const theme = localStorage.getItem("theme") || "light";
     document.body.classList.add(theme);
     toggle.checked = theme === "dark";
-    renderCalendar();
+
+    if (!localStorage.getItem("saldoInicial")) {
+        mostrarModalSaldo();
+    } else {
+        renderCalendar();
+    }
 });
 
 toggle.addEventListener("change", () => {
@@ -325,3 +333,191 @@ toggle.addEventListener("change", () => {
 });
 
 renderCalendar();
+
+function mostrarModalSaldo() {
+    document.getElementById("modalSaldo").classList.add("show");
+}
+
+function guardarSaldoInicial() {
+    const input = document.getElementById("saldoInicialInput");
+    const valor = Number(input.value);
+
+    if (!valor || valor < 0) {
+        alert("Ingresa un saldo válido");
+        return;
+    }
+
+    localStorage.setItem("saldoInicial", valor);
+    document.getElementById("modalSaldo").classList.remove("show");
+
+    renderCalendar();
+}
+
+
+/* ===============================
+   ALERTAS - SISTEMA COMPLETO
+================================*/
+
+// ===== STORAGE =====
+let alertas = JSON.parse(localStorage.getItem("alertas")) || [];
+
+// ===== UTILIDADES =====
+function hoyISO() {
+    return new Date().toISOString().split("T")[0];
+}
+
+function diasRestantes(fecha) {
+    return Math.ceil((new Date(fecha) - new Date()) / 86400000);
+}
+
+// ===== BADGE SUPERIOR (SOLO HOY) =====
+function actualizarBadge() {
+    const hoy = hoyISO();
+    const hoyCount = alertas.filter(a => a.fecha === hoy).length;
+
+    const badge = document.getElementById("countNotificaciones");
+    if (!badge) return;
+
+    badge.textContent = hoyCount;
+    badge.style.display = hoyCount > 0 ? "flex" : "none";
+}
+
+// ===== RENDER PANEL =====
+function renderNotificaciones() {
+    const hoy = hoyISO();
+    const contHoy = document.getElementById("listaHoy");
+    const contProx = document.getElementById("listaProximas");
+
+    contHoy.innerHTML = "";
+    contProx.innerHTML = "";
+
+    let hoyCount = 0;
+    let proxCount = 0;
+
+    alertas.forEach(a => {
+        const item = document.createElement("div");
+        item.className = "notif-item";
+
+        if (a.fecha === hoy) {
+            hoyCount++;
+            item.textContent = a.descripcion;
+            contHoy.appendChild(item);
+        } 
+        else if (a.fecha > hoy) {
+            proxCount++;
+            item.textContent =
+                `En ${diasRestantes(a.fecha)} día(s) · ${a.descripcion}`;
+            contProx.appendChild(item);
+        }
+    });
+
+    document.getElementById("badgeHoy").textContent = hoyCount;
+    document.getElementById("badgeProx").textContent = proxCount;
+
+    if (!contHoy.innerHTML)
+        contHoy.innerHTML = "<p class='empty'>Sin alertas hoy</p>";
+
+    if (!contProx.innerHTML)
+        contProx.innerHTML = "<p class='empty'>Sin próximas alertas</p>";
+}
+
+// ===== PANEL =====
+function togglePanel() {
+    const panel = document.getElementById("notifPanel");
+    panel.classList.toggle("show");
+
+    if (panel.classList.contains("show")) {
+        renderNotificaciones();
+        mostrarHoy(); // default
+    }
+}
+
+// ===== SECCIONES =====
+function mostrarHoy() {
+    document.getElementById("sectionHoy").classList.remove("hidden");
+    document.getElementById("sectionProx").classList.add("hidden");
+
+    document.querySelector(".badge-card.hoy").classList.add("active");
+    document.querySelector(".badge-card.prox").classList.remove("active");
+}
+
+function mostrarProximas() {
+    document.getElementById("sectionHoy").classList.add("hidden");
+    document.getElementById("sectionProx").classList.remove("hidden");
+
+    document.querySelector(".badge-card.hoy").classList.remove("active");
+    document.querySelector(".badge-card.prox").classList.add("active");
+}
+
+// ===== AGREGAR ALERTA =====
+function agregarAlerta(fecha, descripcion) {
+    alertas.push({
+        id: Date.now(),
+        fecha,
+        descripcion
+    });
+
+    localStorage.setItem("alertas", JSON.stringify(alertas));
+    actualizarBadge();
+}
+
+// ===== MODAL NUEVA ALERTA =====
+function abrirModalNuevaAlerta() {
+    document.getElementById("modalNuevaAlerta").classList.add("show");
+}
+
+function cerrarModalNuevaAlerta() {
+    document.getElementById("modalNuevaAlerta").classList.remove("show");
+    document.getElementById("alertaFecha").value = "";
+    document.getElementById("alertaDescripcion").value = "";
+}
+
+function guardarNuevaAlerta() {
+    const fecha = document.getElementById("alertaFecha").value;
+    const descripcion = document.getElementById("alertaDescripcion").value.trim();
+
+    if (!fecha || !descripcion) {
+        alert("Completa todos los campos");
+        return;
+    }
+
+    agregarAlerta(fecha, descripcion);
+    cerrarModalNuevaAlerta();
+}
+
+// ===== MODAL ALERTAS DE HOY (1 VEZ POR DÍA) =====
+function verificarAlertasHoy() {
+    const hoy = hoyISO();
+    const hoyCount = alertas.filter(a => a.fecha === hoy).length;
+
+    if (hoyCount === 0) return;
+
+    const key = `alertasHoyMostradas_${hoy}`;
+    if (localStorage.getItem(key)) return;
+
+    document.getElementById("mensajeHoy").textContent =
+        `Tienes ${hoyCount} alerta${hoyCount > 1 ? "s" : ""} programada${hoyCount > 1 ? "s" : ""} para hoy.`;
+
+    document.getElementById("modalHoy").classList.add("show");
+    localStorage.setItem(key, "true");
+}
+
+function abrirDesdeModal() {
+    document.getElementById("modalHoy").classList.remove("show");
+    document.getElementById("notifPanel").classList.add("show");
+
+    renderNotificaciones();
+    mostrarHoy();
+}
+
+// ===== EVENTOS =====
+document.addEventListener("DOMContentLoaded", () => {
+    actualizarBadge();
+    verificarAlertasHoy();
+});
+
+document.getElementById("btnNotificaciones")
+    .addEventListener("click", togglePanel);
+
+document.getElementById("btnAgregarAlerta")
+    .addEventListener("click", abrirModalNuevaAlerta);

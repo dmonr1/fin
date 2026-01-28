@@ -10,6 +10,69 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
+
+<div class="float-nav">
+    <div class="float-item" id="btnNotificaciones">
+        <i class="fa-solid fa-bell"></i>
+        <span class="badge-count" id="countNotificaciones">0</span>
+    </div>
+
+    <div class="float-item" id="btnAgregarAlerta">
+        <i class="fa-solid fa-plus"></i>
+    </div>
+</div>
+
+<div id="notifPanel" class="notif-panel">
+
+    <div class="notif-badges">
+        <div class="badge-card hoy active" onclick="mostrarHoy()">
+            Hoy <span id="badgeHoy">0</span>
+        </div>
+
+        <div class="badge-card prox" onclick="mostrarProximas()">
+            Próximas <span id="badgeProx">0</span>
+        </div>
+    </div>
+
+    <div class="notif-section" id="sectionHoy">
+        <div id="listaHoy"></div>
+    </div>
+
+    <div class="notif-section hidden" id="sectionProx">
+        <div id="listaProximas"></div>
+    </div>
+
+</div>
+
+<div class="modal-overlay" id="modalHoy">
+    <div class="modal">
+        <h3>🔔 Alertas para hoy</h3>
+        <p id="mensajeHoy"></p>
+        <button class="modal-btn" onclick="abrirDesdeModal()">Revisar alertas</button>
+    </div>
+</div>
+
+
+<div class="modal-overlay" id="modalNuevaAlerta">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-icon info">
+                <i class="fa-solid fa-plus"></i>
+            </div>
+            <h3>Agregar nueva alerta</h3>
+        </div>
+
+        <div class="modal-body">
+            <input type="date" id="alertaFecha" placeholder="Fecha de la alerta">
+            <input type="text" id="alertaDescripcion" placeholder="Descripción de la alerta">
+        </div>
+
+        <button class="modal-btn" onclick="guardarNuevaAlerta()">Guardar alerta</button>
+        <button class="modal-btn" style="background: #e74c3c;" onclick="cerrarModalNuevaAlerta()">Cancelar</button>
+    </div>
+</div>
+
+
 <div class="modal-overlay" id="modal">
     <div class="modal">
         <div class="modal-header">
@@ -37,6 +100,27 @@
         <div id="modalDiaToggle"></div>
         <div id="modalDiaTotales"></div>
         <button class="modal-btn" onclick="cerrarModalDia()">Cerrar</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalSaldo">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-icon info">
+                <i class="fa-solid fa-wallet"></i>
+            </div>
+            <h3>Saldo inicial</h3>
+        </div>
+
+        <p>Ingresa tu saldo actual para comenzar</p>
+
+        <div class="input-group">
+            <input type="number" id="saldoInicialInput" placeholder="Ej: 1500.00">
+        </div>
+
+        <button class="modal-btn" onclick="guardarSaldoInicial()">
+            Guardar saldo
+        </button>
     </div>
 </div>
 
@@ -71,7 +155,7 @@
                         </div>
                         <div>
                             <h3>Movimientos</h3>
-                            <p class="resumen-sub">Día 28 · S/ 1130.00</p>
+                            <p class="resumen-sub">28 de cada mes · <strong> S/ + 1130.00</strong></p>
                         </div>
                     </div>
                 </div>
@@ -128,4 +212,5 @@
     </div>
     <script src="app.js"></script>
 </body>
+
 </html>
