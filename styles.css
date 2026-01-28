@@ -591,12 +591,14 @@ h3 {
     top: 6px;
     background: rgba(46, 204, 113, 0.25);
     color: #2ecc71;
+    z-index: 999;
 }
 
 .badge.gasto {
     top: 34px;
     background: rgba(231, 76, 60, 0.25);
     color: #e74c3c;
+    z-index: 999;
 }
 
 /* contador */
@@ -1340,7 +1342,6 @@ body.dark #saldoInicialInput:focus {
 }
 
 body.dark .badge.gasto {
-    top: 34px;
     background: rgb(231 45 25 / 60%) !important;
     color: #ff1800;
 }
@@ -1469,9 +1470,10 @@ body.dark .empty {
     }
 
     .right {
-        width: 100% !important;
+        width: 860px;
         height: auto !important;
         order: 2;
+        justify-content: center;
     }
 
     .calendar-card {
@@ -1486,7 +1488,7 @@ body.dark .empty {
     }
 
     .calendar-day{
-        height: 40px;
+        height: 60px;
     }
 
     .float-nav {
@@ -1526,7 +1528,7 @@ body.dark .empty {
 }
 
 
-@media (max-width: 768px) {
+@media (max-width: 920px) {
 
     body {
         padding: 20px;
@@ -1613,4 +1615,20 @@ body.dark .empty {
         overflow: hidden;
         width: 350px;
     }
+
+    .badge .count {
+    position: absolute;
+    bottom: -5px;
+    right: -4px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: #333;
+    color: #fff;
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: scale(1);
+}
 }
