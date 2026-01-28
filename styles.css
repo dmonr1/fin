@@ -1530,6 +1530,7 @@ body.dark .empty {
 
     body {
         padding: 20px;
+        height: 100dvh;
     }
 
     .layout {
@@ -1599,5 +1600,17 @@ body.dark .empty {
 
     .badge.gasto {
         top: 10px;
+    }
+
+    #modalNuevaAlerta .modal {
+        width: 100%;
+        max-width: 350px;
+        padding: 22px;
+    }
+
+    .modal-dia {
+        max-height: 80vh;
+        overflow: hidden;
+        width: 350px;
     }
 }
