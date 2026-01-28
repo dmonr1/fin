@@ -943,8 +943,15 @@ select:focus {
 }
 
 @keyframes slideIn {
-    from { opacity: 0; transform: translateX(20px); }
-    to   { opacity: 1; transform: translateX(0); }
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .notif-badges {
@@ -969,7 +976,7 @@ select:focus {
 }
 
 .badge-card span {
-    background: rgba(255,255,255,.25);
+    background: rgba(255, 255, 255, .25);
     padding: 3px 8px;
     border-radius: 999px;
     font-size: 12px;
@@ -977,15 +984,15 @@ select:focus {
 
 .badge-card.active {
     opacity: 1;
-    box-shadow: 0 6px 16px rgba(0,0,0,.25);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, .25);
 }
 
 .badge-card.hoy {
-    background: linear-gradient(135deg,#ef4444,#dc2626);
+    background: linear-gradient(135deg, #ef4444, #dc2626);
 }
 
 .badge-card.prox {
-    background: linear-gradient(135deg,#4f8cff,#3b82f6);
+    background: linear-gradient(135deg, #4f8cff, #3b82f6);
 }
 
 .notif-item {
@@ -993,7 +1000,8 @@ select:focus {
     backdrop-filter: blur(18px) saturate(160%);
     -webkit-backdrop-filter: blur(18px) saturate(160%);
     border: 1px solid rgba(255, 255, 255, 0.45);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18), inset 0 1px 1px rgba(255, 255, 255, 0.7);    padding: 8px 10px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18), inset 0 1px 1px rgba(255, 255, 255, 0.7);
+    padding: 8px 10px;
     border-radius: 10px;
     margin-bottom: 6px;
     font-size: 13px;
@@ -1037,7 +1045,7 @@ select:focus {
 
 .float-item:hover {
     transform: scale(1.05);
-    background: rgba(255,255,255,0.45);
+    background: rgba(255, 255, 255, 0.45);
 }
 
 .float-item i {
@@ -1227,7 +1235,7 @@ body.dark .ingreso {
 }
 
 body.dark .gasto {
-    background: rgb(3, 82, 36) 
+    background: rgb(3, 82, 36)
 }
 
 body.dark .mov-item.ingreso {
@@ -1294,7 +1302,7 @@ body.dark .toggle-mov {
 
 body.dark * {
     scrollbar-color: rgba(79, 140, 255, 0.75) transparent;
-    
+
 }
 
 body.dark input,
@@ -1391,7 +1399,7 @@ body.dark #modalNuevaAlerta .modal-btn[style] {
 body.dark .float-item {
     background: rgb(108 107 107 / 65%);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.55),
-    inset 0 1px 1px rgba(255, 255, 255, 0.25);
+        inset 0 1px 1px rgba(255, 255, 255, 0.25);
 }
 
 body.dark .notif-panel {
@@ -1407,11 +1415,189 @@ body.dark .notif-item {
     background: #294772;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    border: none ;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18) !important;   
-     color: #e5e7eb;
+    border: none;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18) !important;
+    color: #e5e7eb;
 }
 
 body.dark .empty {
     color: #9ca3af;
+}
+
+
+@media (max-width: 1500px) {
+
+    .calendar-card {
+        width: 960px;
+    }
+}
+
+
+@media (max-width: 1340px) {
+
+    body {
+        padding: 20px;
+    }
+
+    .layout {
+        flex-direction: column !important;
+        height: auto !important;
+    }
+
+    .left {
+        width: 100% !important;
+        order: 1;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .resumen {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 14px;
+        height: 186px;
+    }
+    
+    .saldo {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 14px;
+        height: 186px;
+    }
+
+    .right {
+        width: 100% !important;
+        height: auto !important;
+        order: 2;
+    }
+
+    .calendar-card {
+        width: 100% !important;
+        height: auto !important;
+        padding: 16px;
+        margin-bottom: 30px;
+    }
+
+    .calendar-days div {
+        font-size: 16px;
+    }
+
+    .calendar-day{
+        height: 40px;
+    }
+
+    .float-nav {
+        bottom: 16px;
+        top: auto;
+    }
+
+    .notif-panel {
+        right: 80px;
+        bottom: 80px;
+    }
+
+    .badge.ingreso {
+        top: -6px;
+        background: rgba(46, 204, 113, 0.25);
+        color: #2ecc71;
+        font-size: 14px !important;
+    }
+
+    .badge {
+        position: absolute;
+        right: -10px;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        font-size: 14px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: scale(1);
+    }
+
+    .badge.gasto {
+        top: 10px;
+    }
+}
+
+
+@media (max-width: 768px) {
+
+    body {
+        padding: 20px;
+    }
+
+    .layout {
+        flex-direction: column !important;
+        height: auto !important;
+    }
+
+    .left {
+        width: 100% !important;
+        order: 1;
+        flex-direction: column;
+        justify-content: none;
+        align-items: normal;
+    }
+
+    .right {
+        width: 100% !important;
+        height: auto !important;
+        order: 2;
+    }
+
+    .calendar-card {
+        width: 100% !important;
+        height: auto !important;
+        padding: 16px;
+        margin-bottom: 30px;
+    }
+
+    .calendar-days div {
+        font-size: 16px;
+    }
+
+    .calendar-day{
+        height: 40px;
+    }
+
+    .float-nav {
+        bottom: 16px;
+        top: auto;
+    }
+
+    .notif-panel {
+        right: 80px;
+        bottom: 80px;
+    }
+
+    .badge.ingreso {
+        top: -6px;
+        background: rgba(46, 204, 113, 0.25);
+        color: #2ecc71;
+        font-size: 14px !important;
+    }
+
+    .badge {
+        position: absolute;
+        right: -10px;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        font-size: 14px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: scale(1);
+    }
+
+    .badge.gasto {
+        top: 10px;
+    }
 }
