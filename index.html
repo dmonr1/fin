@@ -69,7 +69,31 @@
         </div>
 
         <button class="modal-btn" onclick="guardarNuevaAlerta()">Guardar alerta</button>
-        <button class="modal-btn" style="background: #e74c3c;" onclick="cerrarModalNuevaAlerta()">Cancelar</button>
+        <button class="modal-btn danger" onclick="cerrarModalNuevaAlerta()">Cancelar</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalEditarMov">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-icon info">
+                <i class="fa-solid fa-pen"></i>
+            </div>
+            <h3>Editar movimiento</h3>
+        </div>
+
+        <div class="modal-body">
+            <input type="date" id="editFecha">
+            <select id="editTipo">
+                <option value="ingreso">Ingreso</option>
+                <option value="gasto">Gasto</option>
+            </select>
+            <input type="number" id="editMonto" placeholder="Monto">
+            <input type="text" id="editDescripcion" placeholder="Descripción">
+        </div>
+
+        <button class="modal-btn" onclick="guardarEdicion()">Guardar cambios</button>
+        <button class="modal-btn danger" onclick="cerrarModalEditar()">Cancelar</button>
     </div>
 </div>
 
@@ -125,6 +149,45 @@
     </div>
 </div>
 
+<div class="modal-overlay" id="modalMovimientoFijo">
+    <div class="modal modal-lg">
+
+        <div class="modal-header">
+            <div class="modal-icon info">
+                <i class="fa-solid fa-plus"></i>
+            </div>
+            <h3>Movimientos fijos</h3>
+        </div>
+
+        <div class="modal-body">
+            <div id="listaFijos" class="lista-fijos"></div>
+
+
+            <h4 class="fijo-nuevo">Nuevo movimiento fijo</h4>
+
+            <div class="form-grid">
+                <input class="fijo-in" type="number" id="fijoDia" placeholder="Día (1-31)">
+                <select  class="fijo-in" id="fijoTipo">
+                    <option value="ingreso">Ingreso</option>
+                    <option value="gasto">Gasto</option>
+                </select>
+                <input class="fijo-in" type="number" id="fijoMonto" placeholder="Monto">
+                <input class="fijo-in" type="text" id="fijoDescripcion" placeholder="Descripción">
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="modal-btn" onclick="guardarMovimientoFijo()">
+                Guardar
+            </button>
+            <button class="modal-btn danger" onclick="cerrarModalMovimientoFijo()">
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>
+
+
 <body>
 
     <div class="layout">
@@ -156,22 +219,28 @@
                         </div>
                         <div>
                             <h3>Movimientos</h3>
-                            <p class="resumen-sub">28 de cada mes · <strong> S/ + 1130.00</strong></p>
+            
+                            <button class="btn-fijo" onclick="abrirModalMovimientoFijo()">
+                                <i class="fa-solid fa-plus"></i>
+                                Movimientos fijos
+                            </button>
                         </div>
                     </div>
                 </div>
+            
                 <div class="resumen-body">
                     <div class="resumen-item ingreso">
-                        <span class="res">Ingresos</span>
-                        <strong>S/ <span class="res" id="ingresos">0.00</span></strong>
+                        <span>Ingresos</span>
+                        <strong>S/ <span id="ingresos">0.00</span></strong>
                     </div>
-
+            
                     <div class="resumen-item gasto">
-                        <span class="res">Gastos</span>
+                        <span>Gastos</span>
                         <strong>S/ <span id="gastos">0.00</span></strong>
                     </div>
                 </div>
             </div>
+            
             <div class="card registro">
                 <div class="registro-header">
                     <div class="registro-icon">

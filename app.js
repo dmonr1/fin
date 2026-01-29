@@ -6,6 +6,11 @@ let gastosActual = 0;
 let ultimoMovimiento = null;
 
 
+let movimientosFijos = JSON.parse(
+    localStorage.getItem("movimientosFijos")
+) || [];
+
+
 function animarOdometer(elemento, desde, hasta, duracion = 500) {
     const format = (n) => n.toFixed(2);
 
@@ -139,6 +144,7 @@ function renderCalendar() {
 
     actualizarResumen();
     ultimoMovimiento = null;
+    actualizarResumenFijo();
 }
 
 function cambiarMes(direccion) {
@@ -255,17 +261,23 @@ function abrirDetalleDia(fechaISO) {
             <div class="mov-info">
                 <span>${m.descripcion || "Sin descripción"}</span>
             </div>
-            <div class="mov-monto">                
+        
+            <div class="mov-monto">
                 <strong>${m.tipo === "ingreso" ? "+" : "-"} S/ ${m.monto.toFixed(2)}</strong>
             </div>
-            <button class="mov-delete" title="Eliminar">
-                <i class="fa-solid fa-trash"></i>
-            </button>
+        
+            <div class="mov-actions">
+                <button class="mov-edit" title="Editar">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+                <button class="mov-delete" title="Eliminar">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
         `;
 
-        // ✅ EVENTO ELIMINAR (CLAVE)
         item.querySelector(".mov-delete").addEventListener("click", (e) => {
-            e.stopPropagation(); // 🔥 evita que se dispare el click del día
+            e.stopPropagation();
             e.preventDefault();
 
             movimientos = movimientos.filter(x => x.id !== m.id);
@@ -274,6 +286,12 @@ function abrirDetalleDia(fechaISO) {
             renderCalendar();
             abrirDetalleDia(fechaISO);
         });
+
+        item.querySelector(".mov-edit").addEventListener("click", (e) => {
+            e.stopPropagation();
+            abrirModalEditarMovimiento(m);
+        });
+
 
         body.appendChild(item);
 
@@ -321,6 +339,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!localStorage.getItem("saldoInicial")) {
         mostrarModalSaldo();
     } else {
+        ejecutarMovimientosFijosHoy(); 
         renderCalendar();
     }
 });
@@ -353,15 +372,8 @@ function guardarSaldoInicial() {
     renderCalendar();
 }
 
-
-/* ===============================
-   ALERTAS - SISTEMA COMPLETO
-================================*/
-
-// ===== STORAGE =====
 let alertas = JSON.parse(localStorage.getItem("alertas")) || [];
 
-// ===== UTILIDADES =====
 function hoyISO() {
     return new Date().toISOString().split("T")[0];
 }
@@ -370,7 +382,6 @@ function diasRestantes(fecha) {
     return Math.ceil((new Date(fecha) - new Date()) / 86400000);
 }
 
-// ===== BADGE SUPERIOR (SOLO HOY) =====
 function actualizarBadge() {
     const hoy = hoyISO();
     const hoyCount = alertas.filter(a => a.fecha === hoy).length;
@@ -382,7 +393,6 @@ function actualizarBadge() {
     badge.style.display = hoyCount > 0 ? "flex" : "none";
 }
 
-// ===== RENDER PANEL =====
 function renderNotificaciones() {
     const hoy = hoyISO();
     const contHoy = document.getElementById("listaHoy");
@@ -402,7 +412,7 @@ function renderNotificaciones() {
             hoyCount++;
             item.textContent = a.descripcion;
             contHoy.appendChild(item);
-        } 
+        }
         else if (a.fecha > hoy) {
             proxCount++;
             item.textContent =
@@ -421,18 +431,16 @@ function renderNotificaciones() {
         contProx.innerHTML = "<p class='empty'>Sin próximas alertas</p>";
 }
 
-// ===== PANEL =====
 function togglePanel() {
     const panel = document.getElementById("notifPanel");
     panel.classList.toggle("show");
 
     if (panel.classList.contains("show")) {
         renderNotificaciones();
-        mostrarHoy(); // default
+        mostrarHoy();
     }
 }
 
-// ===== SECCIONES =====
 function mostrarHoy() {
     document.getElementById("sectionHoy").classList.remove("hidden");
     document.getElementById("sectionProx").classList.add("hidden");
@@ -449,7 +457,6 @@ function mostrarProximas() {
     document.querySelector(".badge-card.prox").classList.add("active");
 }
 
-// ===== AGREGAR ALERTA =====
 function agregarAlerta(fecha, descripcion) {
     alertas.push({
         id: Date.now(),
@@ -461,7 +468,6 @@ function agregarAlerta(fecha, descripcion) {
     actualizarBadge();
 }
 
-// ===== MODAL NUEVA ALERTA =====
 function abrirModalNuevaAlerta() {
     document.getElementById("modalNuevaAlerta").classList.add("show");
 }
@@ -485,7 +491,6 @@ function guardarNuevaAlerta() {
     cerrarModalNuevaAlerta();
 }
 
-// ===== MODAL ALERTAS DE HOY (1 VEZ POR DÍA) =====
 function verificarAlertasHoy() {
     const hoy = hoyISO();
     const hoyCount = alertas.filter(a => a.fecha === hoy).length;
@@ -510,7 +515,6 @@ function abrirDesdeModal() {
     mostrarHoy();
 }
 
-// ===== EVENTOS =====
 document.addEventListener("DOMContentLoaded", () => {
     actualizarBadge();
     verificarAlertasHoy();
@@ -521,3 +525,396 @@ document.getElementById("btnNotificaciones")
 
 document.getElementById("btnAgregarAlerta")
     .addEventListener("click", abrirModalNuevaAlerta);
+
+
+
+function abrirModalEditarMovimiento(mov) {
+    movimientoEditando = mov;
+
+    document.getElementById("editFecha").value = mov.fecha;
+    document.getElementById("editTipo").value = mov.tipo;
+    document.getElementById("editMonto").value = mov.monto;
+    document.getElementById("editDescripcion").value = mov.descripcion || "";
+
+    document.getElementById("modalEditarMov").classList.add("show");
+}
+
+function guardarEdicion() {
+    if (!movimientoEditando) return;
+
+    movimientoEditando.fecha =
+        document.getElementById("editFecha").value;
+
+    movimientoEditando.tipo =
+        document.getElementById("editTipo").value;
+
+    movimientoEditando.monto =
+        Number(document.getElementById("editMonto").value);
+
+    movimientoEditando.descripcion =
+        document.getElementById("editDescripcion").value;
+
+    localStorage.setItem("movimientos", JSON.stringify(movimientos));
+
+    cerrarModalEditar();
+    renderCalendar();
+    abrirDetalleDia(movimientoEditando.fecha);
+}
+
+function cerrarModalEditar() {
+    document.getElementById("modalEditarMov").classList.remove("show");
+    movimientoEditando = null;
+}
+
+function diasDelMes(year, month) {
+    return new Date(year, month + 1, 0).getDate();
+}
+
+
+function obtenerProximoMovimientoFijo() {
+    if (movimientosFijos.length === 0) return null;
+
+    const hoy = new Date();
+    let candidatos = [];
+
+    movimientosFijos.forEach(m => {
+        let year = hoy.getFullYear();
+        let month = hoy.getMonth();
+
+        while (true) {
+            const diasMes = diasDelMes(year, month);
+
+            // ❗ si el día NO existe en ese mes, saltar
+            if (m.dia <= diasMes) {
+                const fecha = new Date(year, month, m.dia);
+
+                // solo fechas futuras o hoy
+                if (fecha >= hoy) {
+                    candidatos.push({
+                        ...m,
+                        fecha
+                    });
+                    break;
+                }
+            }
+
+            // pasar al siguiente mes
+            month++;
+            if (month > 11) {
+                month = 0;
+                year++;
+            }
+        }
+    });
+
+    candidatos.sort((a, b) => a.fecha - b.fecha);
+    return candidatos[0] || null;
+}
+
+
+function actualizarResumenFijo() {
+    const el = document.getElementById("resumenFijo");
+    if (!el) return;
+
+    const prox = obtenerProximoMovimientoFijo();
+
+    if (!prox) {
+        el.textContent = "Sin movimientos fijos";
+        return;
+    }
+
+    const fecha = prox.fecha.toLocaleDateString("es-PE", {
+        day: "2-digit",
+        month: "short"
+    });
+
+    const signo = prox.tipo === "ingreso" ? "+" : "-";
+
+    el.textContent =
+        `Mov. fijo: ${fecha} · ${prox.descripcion} (${signo} ${prox.monto.toFixed(2)})`;
+}
+
+
+function agregarMovimientoFijo(dia, tipo, monto, descripcion) {
+    movimientosFijos.push({
+        id: Date.now(),
+        dia,
+        tipo,
+        monto,
+        descripcion
+    });
+
+    localStorage.setItem(
+        "movimientosFijos",
+        JSON.stringify(movimientosFijos)
+    );
+
+    actualizarResumenFijo();
+}
+
+
+function abrirModalMovimientoFijo() {
+    document.getElementById("modalMovimientoFijo")
+        .classList.add("show");
+}
+
+function cerrarModalMovimientoFijo() {
+    document.getElementById("modalMovimientoFijo")
+        .classList.remove("show");
+
+    document.getElementById("fijoDia").value = "";
+    document.getElementById("fijoMonto").value = "";
+    document.getElementById("fijoDescripcion").value = "";
+}
+
+function guardarMovimientoFijo() {
+    const dia = Number(document.getElementById("fijoDia").value);
+    const tipo = document.getElementById("fijoTipo").value;
+    const monto = Number(document.getElementById("fijoMonto").value);
+    const descripcion =
+        document.getElementById("fijoDescripcion").value.trim();
+
+    if (!dia || dia < 1 || dia > 31 || !monto || !descripcion) {
+        mostrarModal(
+            "Campos incompletos",
+            "Por favor, completa todos los campos."
+        );
+        return;
+    }
+
+    movimientosFijos.push({
+        id: Date.now(),
+        dia,
+        tipo,
+        monto,
+        descripcion
+    });
+
+    localStorage.setItem(
+        "movimientosFijos",
+        JSON.stringify(movimientosFijos)
+    );
+
+    cerrarModalMovimientoFijo();
+    actualizarResumenFijo();
+}
+
+function ejecutarMovimientosFijosHoy() {
+    const hoy = new Date();
+    const diaHoy = hoy.getDate();
+
+    const year = hoy.getFullYear();
+    const month = hoy.getMonth();
+
+    const claveMes = `${year}-${month}`;
+    const keyEjecutados = `fijosEjecutados_${claveMes}`;
+
+    let ejecutados = JSON.parse(localStorage.getItem(keyEjecutados)) || [];
+
+    movimientosFijos.forEach(fijo => {
+        if (fijo.dia !== diaHoy) return;
+
+        if (ejecutados.includes(fijo.id)) return;
+
+        if (fijo.dia > diasDelMes(year, month)) return;
+
+        const fechaISO = hoy.toISOString().split("T")[0];
+
+        const movimiento = {
+            id: Date.now(),
+            fecha: fechaISO,
+            tipo: fijo.tipo,
+            monto: fijo.monto,
+            descripcion: fijo.descripcion + " (fijo)"
+        };
+
+        movimientos.push(movimiento);
+        ejecutados.push(fijo.id);
+
+        ultimoMovimiento = movimiento;
+    });
+
+    if (ejecutados.length > 0) {
+        localStorage.setItem("movimientos", JSON.stringify(movimientos));
+        localStorage.setItem(keyEjecutados, JSON.stringify(ejecutados));
+        renderCalendar();
+    }
+}
+
+
+
+let movimientoEditando = null;
+
+
+function abrirModalEditarMovimiento(mov) {
+    movimientoEditando = mov;
+
+    document.getElementById("editFecha").value = mov.fecha;
+    document.getElementById("editTipo").value = mov.tipo;
+    document.getElementById("editMonto").value = mov.monto;
+    document.getElementById("editDescripcion").value = mov.descripcion || "";
+
+    document.getElementById("modalEditarMov").classList.add("show");
+}
+
+function guardarEdicion() {
+    if (!movimientoEditando) return;
+
+    movimientoEditando.fecha =
+        document.getElementById("editFecha").value;
+
+    movimientoEditando.tipo =
+        document.getElementById("editTipo").value;
+
+    movimientoEditando.monto =
+        Number(document.getElementById("editMonto").value);
+
+    movimientoEditando.descripcion =
+        document.getElementById("editDescripcion").value;
+
+    localStorage.setItem("movimientos", JSON.stringify(movimientos));
+
+    cerrarModalEditar();
+    renderCalendar();
+    abrirDetalleDia(movimientoEditando.fecha);
+}
+
+function cerrarModalEditar() {
+    document.getElementById("modalEditarMov").classList.remove("show");
+    movimientoEditando = null;
+}
+
+
+/* ===============================
+   UTILIDADES
+================================*/
+function diasDelMes(year, month) {
+    return new Date(year, month + 1, 0).getDate();
+}
+
+/* ===============================
+   LISTA EN MODAL
+================================*/
+function renderListaFijos() {
+    const cont = document.getElementById("listaFijos");
+    cont.innerHTML = "";
+
+    if (movimientosFijos.length === 0) {
+        cont.innerHTML = "<p class='empty'>Sin movimientos fijos</p>";
+        return;
+    }
+
+    movimientosFijos.forEach(f => {
+        const div = document.createElement("div");
+        div.className = "fijo-item";
+
+        div.innerHTML = `
+            <div>
+                <strong>Día ${f.dia}</strong>
+                <small>${f.descripcion}</small><br>
+                <small>${f.tipo === "ingreso" ? "+" : "-"} S/ ${f.monto.toFixed(2)}</small>
+            </div>
+
+            <div class="fijo-actions">
+                <button class="delete" onclick="eliminarMovimientoFijo(${f.id})">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+        `;
+
+        cont.appendChild(div);
+    });
+}
+
+/* ===============================
+   CRUD
+================================*/
+function guardarMovimientoFijo() {
+    const dia = Number(document.getElementById("fijoDia").value);
+    const tipo = document.getElementById("fijoTipo").value;
+    const monto = Number(document.getElementById("fijoMonto").value);
+    const descripcion = document.getElementById("fijoDescripcion").value.trim();
+
+    if (!dia || dia < 1 || dia > 31 || !monto || !descripcion) {
+        alert("Completa todos los campos correctamente");
+        return;
+    }
+
+    movimientosFijos.push({
+        id: Date.now(),
+        dia,
+        tipo,
+        monto,
+        descripcion
+    });
+
+    localStorage.setItem(
+        "movimientosFijos",
+        JSON.stringify(movimientosFijos)
+    );
+
+    document.getElementById("fijoDia").value = "";
+    document.getElementById("fijoMonto").value = "";
+    document.getElementById("fijoDescripcion").value = "";
+
+    renderListaFijos();
+}
+
+function eliminarMovimientoFijo(id) {
+    movimientosFijos = movimientosFijos.filter(f => f.id !== id);
+    localStorage.setItem(
+        "movimientosFijos",
+        JSON.stringify(movimientosFijos)
+    );
+    renderListaFijos();
+}
+
+/* ===============================
+   MODAL
+================================*/
+function abrirModalMovimientoFijo() {
+    document.getElementById("modalMovimientoFijo").classList.add("show");
+    renderListaFijos();
+}
+
+function cerrarModalMovimientoFijo() {
+    document.getElementById("modalMovimientoFijo").classList.remove("show");
+}
+
+/* ===============================
+   EJECUCIÓN AUTOMÁTICA
+================================*/
+function ejecutarMovimientosFijosHoy() {
+    const hoy = new Date();
+    const diaHoy = hoy.getDate();
+    const year = hoy.getFullYear();
+    const month = hoy.getMonth();
+
+    const claveMes = `${year}-${month}`;
+    const keyEjecutados = `fijosEjecutados_${claveMes}`;
+
+    let ejecutados =
+        JSON.parse(localStorage.getItem(keyEjecutados)) || [];
+
+    movimientosFijos.forEach(fijo => {
+        if (fijo.dia !== diaHoy) return;
+        if (ejecutados.includes(fijo.id)) return;
+        if (fijo.dia > diasDelMes(year, month)) return;
+
+        movimientos.push({
+            id: Date.now(),
+            fecha: hoy.toISOString().split("T")[0],
+            tipo: fijo.tipo,
+            monto: fijo.monto,
+            descripcion: fijo.descripcion + " (fijo)"
+        });
+
+        ejecutados.push(fijo.id);
+    });
+
+    if (ejecutados.length) {
+        localStorage.setItem("movimientos", JSON.stringify(movimientos));
+        localStorage.setItem(keyEjecutados, JSON.stringify(ejecutados));
+        renderCalendar();
+    }
+}
