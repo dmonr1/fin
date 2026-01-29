@@ -1833,8 +1833,7 @@ body.dark .btn-fijo {
     }
 
     .modal {
-        margin: 30px;
-        max-width: 380px;
+        max-width: 350px;
     }
 
     .modal-body input,
