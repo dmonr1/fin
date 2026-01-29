@@ -5,6 +5,7 @@ let ingresosActual = 0;
 let gastosActual = 0;
 let ultimoMovimiento = null;
 let ultimoFijoAgregado = null;
+let movimientoEditando = null;
 
 let movimientosFijos = JSON.parse(
     localStorage.getItem("movimientosFijos")
@@ -169,6 +170,7 @@ function cambiarMes(direccion) {
 function guardarMovimiento() {
     const fecha = document.getElementById("fecha").value;
     const tipo = document.getElementById("tipo").value;
+    const medio = document.getElementById("medio").value;
     const monto = Number(document.getElementById("monto").value);
     const descripcion = document.getElementById("descripcion").value;
 
@@ -184,6 +186,7 @@ function guardarMovimiento() {
         id: Date.now(),
         fecha,
         tipo,
+        medio,
         monto,
         descripcion
     };
@@ -196,27 +199,54 @@ function guardarMovimiento() {
 }
 
 
+
 function actualizarResumen() {
     let ingresos = 0;
     let gastos = 0;
 
+    let efectivo = 0;
+    let digital = 0;
+
     const saldoInicial = Number(localStorage.getItem("saldoInicial")) || 0;
 
     movimientos.forEach(m => {
-        if (m.tipo === "ingreso") ingresos += m.monto;
-        else gastos += m.monto;
+        if (m.tipo === "ingreso") {
+            ingresos += m.monto;
+            if (m.medio === "efectivo") efectivo += m.monto;
+            else digital += m.monto;
+        } else {
+            gastos += m.monto;
+            if (m.medio === "efectivo") efectivo -= m.monto;
+            else digital -= m.monto;
+        }
     });
 
     const saldo = saldoInicial + ingresos - gastos;
 
-    animarOdometer(document.getElementById("ingresos"), ingresosActual, ingresos);
-    animarOdometer(document.getElementById("gastos"), gastosActual, gastos);
-    animarOdometer(document.getElementById("saldo"), saldoActual, saldo);
+    const elIng = document.getElementById("ingresos");
+    const elGas = document.getElementById("gastos");
+    const elSal = document.getElementById("saldo");
+    
+    if (elIng) animarOdometer(elIng, ingresosActual, ingresos);
+    if (elGas) animarOdometer(elGas, gastosActual, gastos);
+    if (elSal) animarOdometer(elSal, saldoActual, saldo);
+
+    const elEfectivo = document.getElementById("saldoEfectivo");
+    const elDigital = document.getElementById("saldoDigital");
+
+    if (elEfectivo) {
+        elEfectivo.textContent = efectivo.toFixed(2);
+    }
+
+    if (elDigital) {
+        elDigital.textContent = digital.toFixed(2);
+    }
 
     ingresosActual = ingresos;
     gastosActual = gastos;
     saldoActual = saldo;
 }
+
 
 
 function mostrarModal(titulo, mensaje) {
@@ -258,6 +288,12 @@ function abrirDetalleDia(fechaISO) {
         item.className = `mov-item ${m.tipo}`;
 
         item.innerHTML = `
+            <div class="mov-left">
+                <i class="fa-solid ${m.medio === "efectivo"
+                ? "fa-solid fa-circle-dollar-to-slot"
+                : "fa-credit-card"
+            }"></i>
+            </div>
             <div class="mov-info">
                 <span>${m.descripcion || "Sin descripción"}</span>
             </div>
@@ -526,8 +562,6 @@ document.getElementById("btnNotificaciones")
 document.getElementById("btnAgregarAlerta")
     .addEventListener("click", abrirModalNuevaAlerta);
 
-
-
 function abrirModalEditarMovimiento(mov) {
     movimientoEditando = mov;
 
@@ -584,11 +618,9 @@ function obtenerProximoMovimientoFijo() {
         while (true) {
             const diasMes = diasDelMes(year, month);
 
-            // ❗ si el día NO existe en ese mes, saltar
             if (m.dia <= diasMes) {
                 const fecha = new Date(year, month, m.dia);
 
-                // solo fechas futuras o hoy
                 if (fecha >= hoy) {
                     candidatos.push({
                         ...m,
@@ -598,7 +630,6 @@ function obtenerProximoMovimientoFijo() {
                 }
             }
 
-            // pasar al siguiente mes
             month++;
             if (month > 11) {
                 month = 0;
@@ -610,7 +641,6 @@ function obtenerProximoMovimientoFijo() {
     candidatos.sort((a, b) => a.fecha - b.fecha);
     return candidatos[0] || null;
 }
-
 
 function actualizarResumenFijo() {
     const el = document.getElementById("resumenFijo");
@@ -634,7 +664,6 @@ function actualizarResumenFijo() {
         `Mov. fijo: ${fecha} · ${prox.descripcion} (${signo} ${prox.monto.toFixed(2)})`;
 }
 
-
 function agregarMovimientoFijo(dia, tipo, monto, descripcion) {
     movimientosFijos.push({
         id: Date.now(),
@@ -651,7 +680,6 @@ function agregarMovimientoFijo(dia, tipo, monto, descripcion) {
 
     actualizarResumenFijo();
 }
-
 
 function abrirModalMovimientoFijo() {
     document.getElementById("modalMovimientoFijo")
@@ -741,11 +769,6 @@ function ejecutarMovimientosFijosHoy() {
     }
 }
 
-
-
-let movimientoEditando = null;
-
-
 function abrirModalEditarMovimiento(mov) {
     movimientoEditando = mov;
 
@@ -784,17 +807,10 @@ function cerrarModalEditar() {
     movimientoEditando = null;
 }
 
-
-/* ===============================
-   UTILIDADES
-================================*/
 function diasDelMes(year, month) {
     return new Date(year, month + 1, 0).getDate();
 }
 
-/* ===============================
-   LISTA EN MODAL
-================================*/
 function renderListaFijos() {
     const cont = document.getElementById("listaFijos");
     cont.innerHTML = "";
@@ -809,16 +825,13 @@ function renderListaFijos() {
         div.className = "fijo-item";
         div.dataset.id = f.id;
 
-        // ✅ solo el último agregado
         if (f.id === ultimoFijoAgregado) {
             div.classList.add("enter");
 
-            // limpiar flag luego
             setTimeout(() => {
                 ultimoFijoAgregado = null;
             }, 400);
         }
-
 
         div.innerHTML = `
             <div>
@@ -838,9 +851,6 @@ function renderListaFijos() {
     });
 }
 
-/* ===============================
-   CRUD
-================================*/
 function guardarMovimientoFijo() {
     const dia = Number(document.getElementById("fijoDia").value);
     const tipo = document.getElementById("fijoTipo").value;
@@ -872,15 +882,12 @@ function guardarMovimientoFijo() {
         JSON.stringify(movimientosFijos)
     );
 
-    // 🔥 refrescar lista SIN cerrar modal
     renderListaFijos();
 
-    // 🧼 limpiar formulario
     document.getElementById("fijoDia").value = "";
     document.getElementById("fijoMonto").value = "";
     document.getElementById("fijoDescripcion").value = "";
 }
-
 
 function eliminarMovimientoFijo(id) {
     const item = document.querySelector(
@@ -903,11 +910,6 @@ function eliminarMovimientoFijo(id) {
     }, 250);
 }
 
-
-
-/* ===============================
-   MODAL
-================================*/
 function abrirModalMovimientoFijo() {
     document.getElementById("modalMovimientoFijo").classList.add("show");
     renderListaFijos();
@@ -917,9 +919,6 @@ function cerrarModalMovimientoFijo() {
     document.getElementById("modalMovimientoFijo").classList.remove("show");
 }
 
-/* ===============================
-   EJECUCIÓN AUTOMÁTICA
-================================*/
 function ejecutarMovimientosFijosHoy() {
     const hoy = new Date();
     const diaHoy = hoy.getDate();

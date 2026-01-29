@@ -102,7 +102,7 @@ h3 {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 14px;
+    gap: 5px;
 }
 
 .saldo-header {
@@ -131,6 +131,49 @@ h3 {
     gap: 8px;
 }
 
+.saldo-detalle {
+    display: flex;
+    gap: 12px;
+}
+
+.saldo-mini {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.55);
+    border-radius: 12px;
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13px;
+}
+
+.saldo-mini i {
+    font-size: 14px;
+    opacity: 0.7;
+}
+
+.saldo-mini strong {
+    font-size: 14px;
+}
+
+.saldo-mini.efectivo {
+    color: #1fa463;
+}
+
+.saldo-mini.digital {
+    color: #15a6c0;
+}
+
+.row-tipo{
+    flex-direction: row ;
+    display: flex;
+    width: 100%;
+    gap: 10px;
+}
+
+.inp-row{
+    width: 50%;
+}
 .currency {
     font-size: 42px;
     font-weight: 700;
@@ -140,7 +183,7 @@ h3 {
 .saldo .odometro {
     font-size: 44px;
     font-weight: 700;
-    letter-spacing: 0.5px;
+    letter-spacing: 0px;
 }
 
 .saldo.negativo .odometro,
@@ -433,17 +476,17 @@ body.dark .form-grid select {
 
 .resumen-item {
     flex: 1;
-    padding: 14px;
+    padding: 10px 12px;
     border-radius: 14px;
     background: rgba(255, 255, 255, 0.55);
     backdrop-filter: blur(6px);
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
 }
 
 .resumen-item span {
-    font-size: 16px;
+    font-size: 14px;
     opacity: 0.9;
     font-weight: 700;
 }
@@ -453,7 +496,7 @@ body.dark .form-grid select {
 }
 
 .resumen-item strong {
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 700;
 }
 
@@ -488,7 +531,7 @@ body.dark .form-grid select {
 .registro {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
 }
 
 .registro-header {
@@ -553,7 +596,7 @@ body.dark .form-grid select {
 }
 
 .right {
-    height: 756px;
+    height: 805px;
     display: flex;
 }
 
@@ -600,9 +643,10 @@ body.dark .form-grid select {
     border: none;
     background: rgba(255, 255, 255, 0.2);
     color: #fff;
-    padding: 8px 12px;
+    padding: 4px 12px;
     border-radius: 8px;
     cursor: pointer;
+    font-size: 24px;
 }
 
 .calendar-header button:hover {
@@ -1095,7 +1139,7 @@ body.dark .form-grid select {
     cursor: pointer;
     border-radius: 10px;
     background: rgba(79, 140, 255, 0.08);
-    width: 355px;
+    width: 100%;
 }
 
 .toggle-mov:hover {
@@ -1632,13 +1676,63 @@ body.dark .btn-fijo {
     .calendar-card {
         width: 960px;
     }
+
+    .registro {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .registro-header h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .registro-body input, .registro-body select {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
+    .resumen-header h3 {
+        font-size: 16px;
+    }
+
+    .sub {
+        font-size: 16px;
+    }
+
+    .currency {
+        font-size: 38px;
+    }
+
+    .saldo .odometro {
+        font-size: 40px;
+    }
+
+    .card, .calendar-card {
+        padding: 16px;
+    }
+
+    .saldo {
+        gap: 2px;
+    }
+    .right {
+        height: 750px;
+        display: flex;
+    }
 }
 
 
-@media (max-width: 1340px) {
+@media (max-width: 1340px )  {
 
     body {
         padding: 20px;
+    }
+
+    .card, .calendar-card {
+        padding: 16px;
+        width: 320px;
     }
 
     .layout {
@@ -1659,7 +1753,8 @@ body.dark .btn-fijo {
         flex-direction: column;
         justify-content: space-between;
         gap: 14px;
-        height: 205px;
+        height: 220px;
+        width: 250px;
     }
 
     .saldo {
@@ -1667,7 +1762,8 @@ body.dark .btn-fijo {
         flex-direction: column;
         justify-content: center;
         gap: 14px;
-        height: 186px;
+        height: 220px;
+        width: 250px;
     }
 
     .right {
@@ -1734,6 +1830,11 @@ body.dark .btn-fijo {
     body {
         padding: 20px;
         height: 100dvh;
+    }
+
+    .card, .calendar-card {
+        padding: 16px;
+        width: 100% !important;
     }
 
     .layout {

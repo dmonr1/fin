@@ -210,6 +210,18 @@
                     <span class="currency">S/</span>
                     <span id="saldo" class="odometro"></span>
                 </div>
+                <div class="saldo-detalle">
+                    <div class="saldo-mini efectivo">
+                        <span style="font-weight: 700;">Efectivo</span>
+                        <strong>S/ <span id="saldoEfectivo">0.00</span></strong>
+                    </div>
+                
+                    <div class="saldo-mini digital">
+                        <span style="font-weight: 700;">Digital</span>
+                        <strong>S/ <span id="saldoDigital">0.00</span></strong>
+                    </div>
+                </div>
+                
             </div>
             <div class="card resumen">
                 <div class="resumen-header">
@@ -230,12 +242,12 @@
             
                 <div class="resumen-body">
                     <div class="resumen-item ingreso">
-                        <span>Ingresos</span>
+                        <span style="font-size: 13px;">Ingresos</span>
                         <strong>S/ <span id="ingresos">0.00</span></strong>
                     </div>
             
                     <div class="resumen-item gasto">
-                        <span>Gastos</span>
+                        <span style="font-size: 13px;">Gastos</span>
                         <strong>S/ <span id="gastos">0.00</span></strong>
                     </div>
                 </div>
@@ -250,10 +262,16 @@
                 </div>
                 <div class="registro-body">
                     <input type="date" id="fecha">
-                    <select id="tipo">
-                        <option value="ingreso">Ingreso</option>
-                        <option value="gasto">Gasto</option>
-                    </select>
+                    <div class="row-tipo">
+                        <select id="tipo" class="inp-row">
+                            <option value="ingreso">Ingreso</option>
+                            <option value="gasto">Gasto</option>
+                        </select>
+                        <select id="medio" class="inp-row">
+                            <option value="efectivo">Efectivo</option>
+                            <option value="digital">Digital / Tarjeta</option>
+                        </select>
+                    </div>
                     <input type="number" id="monto" placeholder="Monto">
                     <input type="text" id="descripcion" placeholder="Descripción">
                     <button onclick="guardarMovimiento()">Guardar</button>
