@@ -4,7 +4,7 @@ let saldoActual = 0;
 let ingresosActual = 0;
 let gastosActual = 0;
 let ultimoMovimiento = null;
-
+let ultimoFijoAgregado = null;
 
 let movimientosFijos = JSON.parse(
     localStorage.getItem("movimientosFijos")
@@ -339,7 +339,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!localStorage.getItem("saldoInicial")) {
         mostrarModalSaldo();
     } else {
-        ejecutarMovimientosFijosHoy(); 
+        ejecutarMovimientosFijosHoy();
         renderCalendar();
     }
 });
@@ -807,10 +807,22 @@ function renderListaFijos() {
     movimientosFijos.forEach(f => {
         const div = document.createElement("div");
         div.className = "fijo-item";
+        div.dataset.id = f.id;
+
+        // ✅ solo el último agregado
+        if (f.id === ultimoFijoAgregado) {
+            div.classList.add("enter");
+
+            // limpiar flag luego
+            setTimeout(() => {
+                ultimoFijoAgregado = null;
+            }, 400);
+        }
+
 
         div.innerHTML = `
             <div>
-                <strong>Día ${f.dia}</strong>
+                <strong>Día ${f.dia}</strong> <small> · de cada mes</small>
                 <small>${f.descripcion}</small><br>
                 <small>${f.tipo === "ingreso" ? "+" : "-"} S/ ${f.monto.toFixed(2)}</small>
             </div>
@@ -833,41 +845,65 @@ function guardarMovimientoFijo() {
     const dia = Number(document.getElementById("fijoDia").value);
     const tipo = document.getElementById("fijoTipo").value;
     const monto = Number(document.getElementById("fijoMonto").value);
-    const descripcion = document.getElementById("fijoDescripcion").value.trim();
+    const descripcion =
+        document.getElementById("fijoDescripcion").value.trim();
 
     if (!dia || dia < 1 || dia > 31 || !monto || !descripcion) {
-        alert("Completa todos los campos correctamente");
+        mostrarModal(
+            "Campos incompletos",
+            "Por favor, completa todos los campos."
+        );
         return;
     }
 
-    movimientosFijos.push({
+    const nuevo = {
         id: Date.now(),
         dia,
         tipo,
         monto,
         descripcion
-    });
+    };
+
+    movimientosFijos.push(nuevo);
+    ultimoFijoAgregado = nuevo.id;
 
     localStorage.setItem(
         "movimientosFijos",
         JSON.stringify(movimientosFijos)
     );
 
+    // 🔥 refrescar lista SIN cerrar modal
+    renderListaFijos();
+
+    // 🧼 limpiar formulario
     document.getElementById("fijoDia").value = "";
     document.getElementById("fijoMonto").value = "";
     document.getElementById("fijoDescripcion").value = "";
-
-    renderListaFijos();
 }
+
 
 function eliminarMovimientoFijo(id) {
-    movimientosFijos = movimientosFijos.filter(f => f.id !== id);
-    localStorage.setItem(
-        "movimientosFijos",
-        JSON.stringify(movimientosFijos)
+    const item = document.querySelector(
+        `.fijo-item[data-id="${id}"]`
     );
-    renderListaFijos();
+
+    if (!item) return;
+
+    item.classList.add("removing");
+
+    setTimeout(() => {
+        movimientosFijos = movimientosFijos.filter(f => f.id !== id);
+
+        localStorage.setItem(
+            "movimientosFijos",
+            JSON.stringify(movimientosFijos)
+        );
+
+        renderListaFijos();
+    }, 250);
 }
+
+
 
 /* ===============================
    MODAL

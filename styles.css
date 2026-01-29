@@ -267,6 +267,7 @@ h3 {
     color: #64748b;
     margin-top: 4px;
 }
+
 .btn-fijo {
     margin-top: 6px;
     background: transparent;
@@ -312,10 +313,10 @@ h3 {
     background: rgba(79, 140, 255, 0.08);
     padding: 8px 10px;
     border-radius: 10px;
-    font-size: 13px;
+    font-size: 14px;
 }
 
-.fijo-nuevo{
+.fijo-nuevo {
     margin: 5px;
 }
 
@@ -338,7 +339,7 @@ h3 {
     color: #e74c3c;
 }
 
-.fijo-in{
+.fijo-in {
     padding: 10px 12px !important;
 }
 
@@ -354,6 +355,53 @@ h3 {
     border-radius: 10px;
     border: 1px solid #ccc;
 }
+
+@keyframes slideUpFade {
+    from {
+        transform: translateY(12px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* SALIDA (slide left) */
+@keyframes slideLeftFade {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(-40px);
+        opacity: 0;
+    }
+}
+
+.fijos-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.fijo-item {
+    transition: transform 0.2s ease;
+}
+
+
+/* APARECER */
+.fijo-item.enter {
+    animation: slideUpFade 0.35s ease forwards;
+}
+
+/* ELIMINAR */
+.fijo-item.removing {
+    animation: slideLeftFade 0.25s ease forwards;
+}
+
 
 /* DARK */
 body.dark .fijo-item {
@@ -1013,13 +1061,29 @@ body.dark .form-grid select {
     background: rgba(231, 76, 60, 0.18);
 }
 
-#modal { z-index: 1500; }
-#modalSaldo { z-index: 1200; }
-#modalDia { z-index: 1300; }
-#modalNuevaAlerta { z-index: 1400; }
+#modal {
+    z-index: 1500;
+}
 
-#modalEditarMov { z-index: 2000; }
-#modalMovimientoFijo { z-index: 1300;}
+#modalSaldo {
+    z-index: 1200;
+}
+
+#modalDia {
+    z-index: 1300;
+}
+
+#modalNuevaAlerta {
+    z-index: 1400;
+}
+
+#modalEditarMov {
+    z-index: 2000;
+}
+
+#modalMovimientoFijo {
+    z-index: 1300;
+}
 
 .toggle-mov {
     text-align: center;
@@ -1595,9 +1659,9 @@ body.dark .btn-fijo {
         flex-direction: column;
         justify-content: space-between;
         gap: 14px;
-        height: 186px;
+        height: 205px;
     }
-    
+
     .saldo {
         display: flex;
         flex-direction: column;
@@ -1624,7 +1688,7 @@ body.dark .btn-fijo {
         font-size: 16px;
     }
 
-    .calendar-day{
+    .calendar-day {
         height: 60px;
     }
 
@@ -1702,7 +1766,7 @@ body.dark .btn-fijo {
         font-size: 16px;
     }
 
-    .calendar-day{
+    .calendar-day {
         height: 40px;
     }
 
@@ -1725,7 +1789,7 @@ body.dark .btn-fijo {
 
     .badge {
         position: absolute;
-        right: -10px;
+        right: -6px;
         width: 15px;
         height: 15px;
         border-radius: 50%;
@@ -1754,18 +1818,41 @@ body.dark .btn-fijo {
     }
 
     .badge .count {
-    position: absolute;
-    bottom: -5px;
-    right: -4px;
-    width: 13px;
-    height: 13px;
-    border-radius: 50%;
-    background: #333;
-    color: #fff;
-    font-size: 9px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform: scale(1);
-}
+        position: absolute;
+        bottom: -5px;
+        right: -4px;
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: #333;
+        color: #fff;
+        font-size: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal {
+        margin: 30px;
+        max-width: 380px;
+    }
+
+    .modal-body input,
+    .modal-body select {
+        padding: 10px 14px !important;
+        font-size: 13px;
+    }
+
+    .modal-footer {
+        justify-content: center;
+        align-items: center;
+        flex: auto;
+        display: flex;
+        gap: 15px;
+    }
+
+    .modal-btn {
+        padding: 10px;
+        font-size: 14px;
+    }
 }
